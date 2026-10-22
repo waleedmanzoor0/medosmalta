@@ -10,7 +10,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Logo } from "./index";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s.redirect === "string" ? s.redirect : undefined }),
+  validateSearch: (s: Record<string, unknown>): { redirect?: string | undefined } => ({ redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined }),
   head: () => ({
     meta: [
       { title: "Sign in — MedOS" },
@@ -38,8 +38,8 @@ function AuthPage() {
 
   function validate() {
     const e: Record<string, string> = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) e.email = "Enter a valid email address.";
-    if (mode !== "forgot" && password.length < 8) e.password = "Use at least 8 characters.";
+    if (!/^\S+@\S+\.\S+$/.test(email)) e["email"] = "Enter a valid email address.";
+    if (mode !== "forgot" && password.length < 8) e["password"] = "Use at least 8 characters.";
     setErrors(e);
     return !Object.keys(e).length;
   }
@@ -75,7 +75,10 @@ function AuthPage() {
 
   async function oauth(provider: "google" | "lovable") {
     const r = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
-    if (r.error) return toast.error(r.error.message ?? "Sign-in failed");
+    if (r.error) {
+      toast.error(r.error.message ?? "Sign-in failed");
+      return;
+    }
     if (r.redirected) return;
     navigate({ to: "/dashboard" });
   }
@@ -102,9 +105,9 @@ function AuthPage() {
               {mode === "signup" && (
                 <Field label="Your name"><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></Field>
               )}
-              <Field label="Email" error={errors.email}><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
+              <Field label="Email" error={errors["email"]}><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
               {mode !== "forgot" && (
-                <Field label="Password" error={errors.password}>
+                <Field label="Password" error={errors["password"]}>
                   <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
                 </Field>
               )}

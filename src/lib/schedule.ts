@@ -11,9 +11,10 @@ export function findConflicts(items: TimedItem[]): Set<string> {
   const out = new Set<string>();
   for (let i = 0; i < sorted.length; i++) {
     for (let j = i + 1; j < sorted.length; j++) {
-      if (new Date(sorted[j].starts_at) >= new Date(sorted[i].ends_at)) break;
-      out.add(sorted[i].id);
-      out.add(sorted[j].id);
+      const a = sorted[i]!, b = sorted[j]!;
+      if (new Date(b.starts_at) >= new Date(a.ends_at)) break;
+      out.add(a.id);
+      out.add(b.id);
     }
   }
   return out;

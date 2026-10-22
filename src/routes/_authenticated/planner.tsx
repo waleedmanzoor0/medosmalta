@@ -36,7 +36,10 @@ function Planner() {
 
   async function reschedule(e: CalEvent) {
     const slot = findNextFreeSlot(e, events);
-    if (!slot) return toast.error("No free slot found in the next 7 days.");
+    if (!slot) {
+      toast.error("No free slot found in the next 7 days.");
+      return;
+    }
     await save.mutateAsync({ id: e.id, ...slot });
     toast.success(`Moved “${e.title}” to ${format(new Date(slot.starts_at), "EEE HH:mm")}`);
   }

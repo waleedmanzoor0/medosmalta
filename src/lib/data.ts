@@ -37,7 +37,7 @@ export function useRows<T>(table: TableName) {
 export function useSave(table: TableName, label = "Saved") {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (row: Record<string, unknown> & { id?: string }) => {
+    mutationFn: async (row: { id?: string | undefined; [k: string]: unknown }) => {
       const { id, ...rest } = row;
       const q = id ? from(table).update(rest).eq("id", id) : from(table).insert(rest);
       const { error } = await q;
@@ -109,7 +109,7 @@ export async function loadSampleData() {
   ];
   const { data: m, error } = await supabase.from("modules").insert(mods).select("id,name");
   if (error) throw error;
-  const [ana, phy, bch] = m!;
+  const [ana, phy, bch] = m as [{ id: string }, { id: string }, { id: string }];
   const topics: TablesInsert<"topics">[] = [
     { module_id: ana.id, subject: "Upper limb", lecture: "Lecture 3", title: "Brachial plexus", learning_objectives: "Describe roots, trunks, divisions, cords and branches.", source_reference: "Course lecture slides, week 3", status: "learning", is_sample: true },
     { module_id: ana.id, subject: "Upper limb", lecture: "Lecture 4", title: "Rotator cuff muscles", status: "needs_revision", next_review_at: dateIn(0), is_sample: true },

@@ -36,7 +36,10 @@ function SettingsPage() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const goal = Number(f.get("goal"));
-    if (!(goal > 0 && goal <= 100)) return toast.error("Weekly goal must be between 1 and 100 hours.");
+    if (!(goal > 0 && goal <= 100)) {
+      toast.error("Weekly goal must be between 1 and 100 hours.");
+      return;
+    }
     save.mutate({ id: data!.id, display_name: String(f.get("name")).trim() || null, weekly_study_goal_hours: goal });
   }
 

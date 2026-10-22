@@ -70,7 +70,7 @@ export const PRIORITY_CLS: Record<string, string> = {
   low: "bg-muted text-muted-foreground",
 };
 
-export function Field({ label, error, children, hint }: { label: string; error?: string; hint?: string; children: ReactNode }) {
+export function Field({ label, error, children, hint }: { label: string; error?: string | undefined; hint?: string | undefined; children: ReactNode }) {
   return (
     <label className="grid gap-1.5 text-sm">
       <span className="font-medium">{label}</span>
