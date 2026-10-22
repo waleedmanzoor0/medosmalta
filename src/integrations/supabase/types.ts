@@ -75,6 +75,7 @@ export type Database = {
           interval_days: number
           is_sample: boolean
           last_reviewed_at: string | null
+          note_id: string | null
           origin: string
           repetitions: number
           source_reference: string | null
@@ -91,6 +92,7 @@ export type Database = {
           interval_days?: number
           is_sample?: boolean
           last_reviewed_at?: string | null
+          note_id?: string | null
           origin?: string
           repetitions?: number
           source_reference?: string | null
@@ -107,6 +109,7 @@ export type Database = {
           interval_days?: number
           is_sample?: boolean
           last_reviewed_at?: string | null
+          note_id?: string | null
           origin?: string
           repetitions?: number
           source_reference?: string | null
@@ -114,6 +117,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "flashcards_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "study_notes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "flashcards_topic_id_fkey"
             columns: ["topic_id"]
@@ -369,6 +379,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      study_notes: {
+        Row: {
+          card_count: number
+          created_at: string
+          error: string | null
+          file_path: string
+          id: string
+          is_sample: boolean
+          mime_type: string
+          module_id: string | null
+          size_bytes: number
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          card_count?: number
+          created_at?: string
+          error?: string | null
+          file_path: string
+          id?: string
+          is_sample?: boolean
+          mime_type: string
+          module_id?: string | null
+          size_bytes?: number
+          status?: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          card_count?: number
+          created_at?: string
+          error?: string | null
+          file_path?: string
+          id?: string
+          is_sample?: boolean
+          mime_type?: string
+          module_id?: string | null
+          size_bytes?: number
+          status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_notes_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
