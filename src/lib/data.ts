@@ -163,7 +163,7 @@ function download(name: string, content: string, type: string) {
 
 export function toCsv(rows: Record<string, unknown>[]) {
   if (!rows.length) return "";
-  const cols = Object.keys(rows[0]);
+  const cols = Object.keys(rows[0]!);
   const esc = (v: unknown) => {
     const s = v == null ? "" : String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -173,13 +173,13 @@ export function toCsv(rows: Record<string, unknown>[]) {
 
 export async function exportAll(format: "json" | "csv") {
   const tables = ["modules", "topics", "tasks", "events", "flashcards"] as const;
-  const out: Record<string, unknown[]> = {};
+  const out: Record<string, Record<string, unknown>[]> = {};
   for (const t of tables) {
     const { data, error } = await supabase.from(t).select("*");
     if (error) throw error;
-    out[t] = data ?? [];
+    out[t] = (data ?? []) as Record<string, unknown>[];
   }
   const stamp = new Date().toISOString().slice(0, 10);
   if (format === "json") download(`medos-export-${stamp}.json`, JSON.stringify(out, null, 2), "application/json");
-  else for (const t of tables) if (out[t].length) download(`medos-${t}-${stamp}.csv`, toCsv(out[t] as Record<string, unknown>[]), "text/csv");
+  else for (const t of tables) { const rows = out[t] ?? []; if (rows.length) download(`medos-${t}-${stamp}.csv`, toCsv(rows), "text/csv"); }
 }
