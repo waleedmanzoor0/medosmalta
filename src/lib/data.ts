@@ -3,10 +3,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
-export type TableName = "modules" | "topics" | "tasks" | "events" | "flashcards" | "profiles" | "quiz_questions" | "quiz_attempts" | "money_transactions" | "money_budgets" | "savings_goals";
+export type TableName = "modules" | "topics" | "tasks" | "events" | "flashcards" | "profiles" | "quiz_questions" | "quiz_attempts" | "money_transactions" | "money_budgets" | "savings_goals" | "study_notes";
 export type MoneyTransaction = Tables<"money_transactions">;
 export type MoneyBudget = Tables<"money_budgets">;
 export type SavingsGoal = Tables<"savings_goals">;
+export type StudyNote = Tables<"study_notes">;
 export type Flashcard = Tables<"flashcards">;
 export type QuizQuestion = Tables<"quiz_questions">;
 export type QuizAttempt = Tables<"quiz_attempts">;
@@ -28,6 +29,7 @@ const orderBy: Record<TableName, { col: string; asc: boolean }> = {
   money_transactions: { col: "occurred_on", asc: false },
   money_budgets: { col: "month", asc: false },
   savings_goals: { col: "created_at", asc: true },
+  study_notes: { col: "created_at", asc: false },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

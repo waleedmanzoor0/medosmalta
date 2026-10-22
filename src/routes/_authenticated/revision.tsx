@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { EmptyState, PageHeader, selectCls, StatusPill } from "@/components/medos/ui";
 import { RevisionEditor } from "@/components/medos/revision-editor";
+import { NotesPanel } from "@/components/medos/notes-panel";
 import { useRows, useSave, useRemove, type Flashcard, type QuizQuestion, type QuizAttempt, type Topic, type Module } from "@/lib/data";
 import { isDue, questionOptions, quizScore, scheduleReview, type ReviewRating } from "@/lib/revision";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ function RevisionCentre() {
   const [tab, setTab] = useState("cards");
   const [moduleId, setModuleId] = useState("all");
   const [search, setSearch] = useState("");
+  const [draftsOnly, setDraftsOnly] = useState(false);
   const [editing, setEditing] = useState<{ kind: "card" | "question"; row: Partial<Flashcard> | Partial<QuizQuestion> } | null>(null);
   const [review, setReview] = useState<Flashcard[] | null>(null);
   const [reviewIndex, setReviewIndex] = useState(0);
@@ -53,7 +55,7 @@ function RevisionCentre() {
   const topicName = (id: string | null) => topics.find((t) => t.id === id)?.title ?? "Unlinked";
   const inModule = (id: string | null) => moduleId === "all" || topics.some((t) => t.id === id && t.module_id === moduleId);
   const matches = (text: string) => text.toLowerCase().includes(search.toLowerCase());
-  const filteredCards = cards.filter((c) => inModule(c.topic_id) && matches(`${c.front} ${c.back} ${topicName(c.topic_id)}`));
+  const filteredCards = cards.filter((c) => (!draftsOnly || c.origin === "ai_unverified") && inModule(c.topic_id) && matches(`${c.front} ${c.back} ${topicName(c.topic_id)}`));
   const filteredQuestions = questions.filter((q) => inModule(q.topic_id) && matches(`${q.prompt} ${topicName(q.topic_id)}`));
   const dueCards = filteredCards.filter((c) => isDue(c.due_at));
   const difficult = topics.filter((t) => t.is_difficult && (moduleId === "all" || t.module_id === moduleId) && matches(t.title));
@@ -127,9 +129,10 @@ function RevisionCentre() {
     </div>
     <div className="mb-5 flex flex-col gap-3 sm:flex-row"><div className="relative flex-1"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search revision" placeholder="Search revision" className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} /></div><select aria-label="Filter module" className={cn(selectCls, "sm:w-56")} value={moduleId} onChange={(e) => setModuleId(e.target.value)}><option value="all">All modules</option>{modules.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</select></div>
     {queries.some((q) => q.isError) ? <div className="py-8"><p>Could not load revision records.</p><Button className="mt-3" variant="outline" onClick={() => queries.forEach((q) => q.refetch())}>Retry</Button></div> : queries.some((q) => q.isLoading) ? <p className="py-8 text-muted-foreground">Loading revision…</p> : <Tabs value={tab} onValueChange={setTab}>
-      <TabsList className="mb-5 flex h-auto flex-wrap justify-start"><TabsTrigger value="cards"><Layers className="mr-1.5 size-4" />Flashcards</TabsTrigger><TabsTrigger value="questions">Quizzes</TabsTrigger><TabsTrigger value="difficult">Difficult topics</TabsTrigger><TabsTrigger value="history">Results</TabsTrigger></TabsList>
+      <TabsList className="mb-5 flex h-auto flex-wrap justify-start"><TabsTrigger value="cards"><Layers className="mr-1.5 size-4" />Flashcards</TabsTrigger><TabsTrigger value="questions">Quizzes</TabsTrigger><TabsTrigger value="difficult">Difficult topics</TabsTrigger><TabsTrigger value="history">Results</TabsTrigger><TabsTrigger value="notes">Notes &amp; AI drafts</TabsTrigger></TabsList>
+      <TabsContent value="notes"><NotesPanel onShowDrafts={() => { setDraftsOnly(true); setTab("cards"); }} /></TabsContent>
       <TabsContent value="cards">
-        <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">Your card library</h2><Button size="sm" disabled={!dueCards.length} onClick={() => { setReview(dueCards); setReviewIndex(0); setRevealed(false); }}><Play /> Review due ({dueCards.length})</Button></div>
+        <div className="mb-4 flex items-center justify-between gap-3"><div className="flex flex-wrap items-center gap-3"><h2 className="text-sm font-semibold">Your card library</h2><label className="flex items-center gap-1.5 text-xs text-muted-foreground"><input type="checkbox" checked={draftsOnly} onChange={(e) => setDraftsOnly(e.target.checked)} />AI drafts to review ({cards.filter((c) => c.origin === "ai_unverified").length})</label></div><Button size="sm" disabled={!dueCards.length} onClick={() => { setReview(dueCards); setReviewIndex(0); setRevealed(false); }}><Play /> Review due ({dueCards.length})</Button></div>
         {!filteredCards.length ? <EmptyState icon={Layers} title={cards.length ? "No matching cards" : "No flashcards yet"} action={!cards.length && <Button variant="outline" onClick={() => setEditing({ kind: "card", row: {} })}><Plus /> Flashcard</Button>} /> : <ul className="grid gap-3 sm:grid-cols-2">{filteredCards.map((c) => <li key={c.id} className="min-w-0 rounded-lg border bg-card p-4"><div className="flex items-start justify-between gap-2"><div className="min-w-0"><p className="text-xs text-muted-foreground">{topicName(c.topic_id)}</p><p className="mt-2 line-clamp-3 break-words font-medium">{c.front}</p></div><div className="flex shrink-0"><Button size="icon" variant="ghost" aria-label="Edit flashcard" title="Edit flashcard" onClick={() => setEditing({ kind: "card", row: c })}><Pencil /></Button><Button size="icon" variant="ghost" aria-label="Delete flashcard" title="Delete flashcard" onClick={() => confirm("Delete this flashcard?") && removeCard.mutate(c.id)}><Trash2 /></Button></div></div><div className="mt-4 flex flex-wrap items-center gap-2"><span className={cn("text-xs font-semibold", isDue(c.due_at) ? "text-accent-foreground" : "text-muted-foreground")}>{isDue(c.due_at) ? "Due now" : `Due ${format(new Date(c.due_at), "d MMM")}`}</span><Origin origin={c.origin} />{c.is_sample && <span className="text-xs text-muted-foreground">Sample</span>}<Button variant="ghost" size="sm" className="ml-auto" onClick={() => { setReview([c]); setReviewIndex(0); setRevealed(false); }}>Review</Button>{c.origin === "ai_unverified" && <Button size="sm" variant="outline" onClick={() => saveCard.mutate({ id: c.id, origin: "verified" })}>Mark verified</Button>}</div></li>)}</ul>}
       </TabsContent>
       <TabsContent value="questions">
