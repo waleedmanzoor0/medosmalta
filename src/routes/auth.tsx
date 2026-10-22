@@ -1,22 +1,26 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import "@lovable.dev/cloud-auth-js/styles.css";
+import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/medos/ui";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+import { createOwner, getSetupStatus, usernameToEmail, validateUsername } from "@/lib/owner.functions";
 import { Logo } from "./index";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { redirect?: string | undefined } => ({ redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { redirect?: string | undefined } => ({
+    redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "Sign in — MedOS" },
-      { name: "description", content: "Sign in or create your private MedOS workspace." },
-      { property: "og:title", content: "Sign in — MedOS" },
-      { property: "og:description", content: "Sign in or create your private MedOS workspace." },
+      { title: "Unlock — MedOS" },
+      { name: "description", content: "Private MedOS workspace." },
+      { name: "robots", content: "noindex" },
+      { property: "og:title", content: "Unlock — MedOS" },
+      { property: "og:description", content: "Private MedOS workspace." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -24,109 +28,75 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-type Mode = "signin" | "signup" | "forgot";
-
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("signin");
-  const [email, setEmail] = useState("");
+  const status = useServerFn(getSetupStatus);
+  const setup = useServerFn(createOwner);
+  const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  function validate() {
-    const e: Record<string, string> = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) e["email"] = "Enter a valid email address.";
-    if (mode !== "forgot" && password.length < 8) e["password"] = "Use at least 8 characters.";
-    setErrors(e);
-    return !Object.keys(e).length;
-  }
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/dashboard", replace: true });
+    });
+    status()
+      .then((r) => setNeedsSetup(r.needsSetup))
+      .catch(() => setNeedsSetup(false));
+  }, [navigate, status]);
 
   async function submit(ev: FormEvent) {
     ev.preventDefault();
-    if (!validate()) return;
+    const e: Record<string, string> = {};
+    if (!validateUsername(username)) e["username"] = "3–32 letters, numbers, dots, dashes or underscores.";
+    if (needsSetup && password.length < 10) e["password"] = "Use at least 10 characters.";
+    if (!needsSetup && !password) e["password"] = "Enter your password.";
+    if (needsSetup && confirm !== password) e["confirm"] = "Passwords don't match.";
+    setErrors(e);
+    if (Object.keys(e).length) return;
     setBusy(true);
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        navigate({ to: "/dashboard" });
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
-        });
-        if (error) throw error;
-        setSent("Check your inbox to confirm your email, then sign in.");
-      } else {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
-        if (error) throw error;
-        setSent("If an account exists, a reset link is on its way.");
-      }
-    } catch (e) {
-      toast.error((e as Error).message);
+      if (needsSetup) await setup({ data: { username, password } });
+      const { error } = await supabase.auth.signInWithPassword({ email: usernameToEmail(username), password });
+      if (error) throw new Error(error.message.includes("Invalid") ? "Wrong username or password." : error.message);
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      toast.error((err as Error).message);
     } finally {
       setBusy(false);
     }
   }
 
-  async function oauth(provider: "google" | "lovable") {
-    const r = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
-    if (r.error) {
-      toast.error(r.error.message ?? "Sign-in failed");
-      return;
-    }
-    if (r.redirected) return;
-    navigate({ to: "/dashboard" });
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-5 py-10">
-      <Link to="/" className="mb-8"><Logo /></Link>
+      <div className="mb-8"><Logo /></div>
       <div className="surface w-full max-w-sm p-6 animate-rise">
-        <h1 className="font-display text-2xl">
-          {mode === "signin" ? "Welcome back" : mode === "signup" ? "Create your workspace" : "Reset password"}
-        </h1>
-        {sent ? (
-          <p className="mt-4 rounded-lg bg-primary-soft p-3 text-sm text-accent-foreground">{sent}</p>
+        <div className="mb-1 flex size-9 items-center justify-center rounded-full bg-primary-soft text-accent-foreground"><Lock className="size-4" /></div>
+        <h1 className="font-display mt-3 text-2xl">{needsSetup ? "Set up your private workspace" : "Welcome back"}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {needsSetup ? "Choose the username and password only you will use. This can be done once." : "This workspace is private."}
+        </p>
+        {needsSetup === null ? (
+          <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
         ) : (
-          <>
-            {mode !== "forgot" && (
-              <div className="mt-5 grid gap-2">
-                <Button variant="outline" onClick={() => oauth("google")}>Continue with Google</Button>
-                <button type="button" className="lovable-auth-button" onClick={() => oauth("lovable")}>Continue with Lovable</button>
-                <div className="my-2 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
-              </div>
+          <form onSubmit={submit} className="mt-6 grid gap-4" noValidate>
+            <Field label="Username" error={errors["username"]}>
+              <Input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" autoFocus />
+            </Field>
+            <Field label="Password" error={errors["password"]}>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={needsSetup ? "new-password" : "current-password"} />
+            </Field>
+            {needsSetup && (
+              <Field label="Confirm password" error={errors["confirm"]}>
+                <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
+              </Field>
             )}
-            <form onSubmit={submit} className="mt-2 grid gap-4" noValidate>
-              {mode === "signup" && (
-                <Field label="Your name"><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></Field>
-              )}
-              <Field label="Email" error={errors["email"]}><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
-              {mode !== "forgot" && (
-                <Field label="Password" error={errors["password"]}>
-                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
-                </Field>
-              )}
-              <Button type="submit" disabled={busy}>
-                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
-              </Button>
-            </form>
-          </>
+            <Button type="submit" disabled={busy}>{busy ? "Please wait…" : needsSetup ? "Create & open" : "Open MedOS"}</Button>
+          </form>
         )}
-        <div className="mt-5 flex flex-col gap-1 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? (
-            <>
-              <button className="hover:text-foreground" onClick={() => { setMode("signup"); setSent(null); }}>New here? Create an account</button>
-              <button className="hover:text-foreground" onClick={() => { setMode("forgot"); setSent(null); }}>Forgot password?</button>
-            </>
-          ) : (
-            <button className="hover:text-foreground" onClick={() => { setMode("signin"); setSent(null); }}>Back to sign in</button>
-          )}
-        </div>
       </div>
     </div>
   );
