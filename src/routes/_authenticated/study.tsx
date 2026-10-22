@@ -95,7 +95,7 @@ function StudyHub() {
               {!list.length ? (
                 <EmptyState icon={BookOpen} title="No topics here">Add topics with learning objectives and sources.</EmptyState>
               ) : (
-                <ul className="grid gap-2">
+                <ul className="stagger grid gap-2">
                   {list.map((t) => (
                     <li key={t.id} className="rounded-lg border bg-background p-3">
                       <div className="flex items-start justify-between gap-3">

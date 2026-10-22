@@ -84,7 +84,7 @@ function Dashboard() {
 
         <Panel title="Today's study plan" className="lg:col-span-2" action={<Link to="/planner" className="text-xs font-semibold text-primary">Planner →</Link>}>
           {todayPlan.length ? (
-            <ul className="grid gap-2">
+            <ul className="stagger grid gap-2">
               {todayPlan.map((e) => (
                 <li key={e.id} className={cn("flex items-center justify-between rounded-lg border border-l-4 bg-background px-3 py-2.5", KIND_META[e.kind as Kind].bar)}>
                   <div><p className="text-sm font-medium">{e.title}</p><p className="text-xs text-muted-foreground">{KIND_META[e.kind as Kind].label}{e.location ? ` · ${e.location}` : ""}</p></div>
@@ -110,7 +110,7 @@ function Dashboard() {
 
         <Panel title="Upcoming deadlines" className="lg:col-span-2" action={<Link to="/tasks" className="text-xs font-semibold text-primary">All tasks →</Link>}>
           {deadlines.length ? (
-            <ul className="divide-y">
+            <ul className="stagger divide-y">
               {deadlines.map((t) => (
                 <li key={t.id} className="flex items-center justify-between gap-3 py-2.5">
                   <div className="flex min-w-0 items-center gap-2"><CalendarClock className="size-4 shrink-0 text-muted-foreground" /><span className="truncate text-sm">{t.title}</span></div>
@@ -126,7 +126,7 @@ function Dashboard() {
 
         <Panel title="Revision due" action={<Link to="/revision" aria-label="Open Revision Centre" className="text-primary"><RotateCcw className="size-4" /></Link>}>
           {revision.length ? (
-            <ul className="grid gap-2">
+            <ul className="stagger grid gap-2">
               {revision.map((t) => (
                 <li key={t.id} className="flex items-center justify-between gap-2"><span className="truncate text-sm">{t.title}</span><StatusPill status={t.status} /></li>
               ))}

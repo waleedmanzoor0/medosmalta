@@ -73,7 +73,7 @@ function SettingsPage() {
         </Panel>
         <ChangePassword />
         <Panel title="Privacy & accuracy">
-          <ul className="grid gap-2 text-sm text-muted-foreground">
+          <ul className="stagger grid gap-2 text-sm text-muted-foreground">
             <li>This workspace has a single owner — new sign-ups are switched off.</li>
             <li>Do not store patient-identifiable information.</li>
             <li>Record a source for clinical facts. Future AI-generated content will be clearly marked as unverified.</li>
