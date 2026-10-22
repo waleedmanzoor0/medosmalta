@@ -8,3 +8,10 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture rules
+- Every user table has `user_id default auth.uid()` + own-row RLS; client reads/writes via `src/lib/data.ts` hooks (react-query + browser Supabase client). Why: privacy per user with one consistent CRUD path.
+- Signed-in pages live under `src/routes/_authenticated/` (ssr:false gate + AppShell nav). Why: session lives in localStorage.
+- Sample rows carry `is_sample=true` so they can be bulk-removed. Why: user requirement for removable demo data.
+- Scheduling logic (conflicts, free-slot finding, recurrence) stays pure in `src/lib/schedule.ts` with tests. Why: testable rules.
+- AI-generated study content must be stored with an `origin` flag (`ai_unverified` until the user verifies). Why: never present AI medical content as verified.
