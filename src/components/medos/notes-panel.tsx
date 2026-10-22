@@ -72,7 +72,7 @@ export function NotesPanel({ onShowDrafts }: { onShowDrafts: () => void }) {
       </div>
     </div>
     {notesQuery.isLoading ? <p className="py-6 text-muted-foreground">Loading notes…</p> : !notes.length ? <EmptyState icon={FileText} title="No notes uploaded yet" /> :
-      <ul className="divide-y border-y">{notes.map((n) => <li key={n.id} className="flex flex-wrap items-center gap-3 py-4">
+      <ul className="stagger divide-y border-y">{notes.map((n) => <li key={n.id} className="flex flex-wrap items-center gap-3 py-4">
         <FileText className="size-5 shrink-0 text-muted-foreground" />
         <div className="min-w-0 flex-1">
           <button className="break-words text-left font-medium hover:underline" onClick={() => open(n)}>{n.title}</button>

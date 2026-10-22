@@ -70,7 +70,7 @@ function TasksPage() {
             {tasks.length ? "Try a different search or filter." : "Capture assignments, deadlines and daily routines."}
           </EmptyState>
         ) : (
-          <ul className="divide-y">
+          <ul className="stagger divide-y">
             {list.map((t) => {
               const overdue = !t.completed && t.due_date && t.due_date < today;
               return (

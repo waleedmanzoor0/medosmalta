@@ -123,6 +123,15 @@
   h3 {
     letter-spacing: -0.015em;
   }
+  /* Swift, subtle press feedback on every button. */
+  button:not(:disabled) {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+  }
+  button:not(:disabled):active {
+    transform: scale(0.97);
+  }
 }
 
 @utility font-display {
@@ -148,6 +157,31 @@
 
 @utility animate-rise {
   animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Children of a .stagger container rise in one after another. */
+@utility stagger {
+  & > * {
+    animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  & > *:nth-child(2) { animation-delay: 40ms; }
+  & > *:nth-child(3) { animation-delay: 80ms; }
+  & > *:nth-child(4) { animation-delay: 120ms; }
+  & > *:nth-child(5) { animation-delay: 160ms; }
+  & > *:nth-child(6) { animation-delay: 200ms; }
+  & > *:nth-child(7) { animation-delay: 240ms; }
+  & > *:nth-child(8) { animation-delay: 280ms; }
+  & > *:nth-child(9) { animation-delay: 320ms; }
+  & > *:nth-child(n+10) { animation-delay: 360ms; }
+}
+
+/* Gentle hover lift for interactive cards. */
+@utility lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
 }
 
 @keyframes rise {
@@ -177,5 +211,14 @@
 .money-meter-over::-webkit-progress-value { background: var(--destructive); }
 .money-meter-over::-moz-progress-bar { background: var(--destructive); }
 @media (prefers-reduced-motion: reduce) {
-  .animate-rise { animation: none; }
+  .animate-rise,
+  .stagger > * {
+    animation: none;
+  }
+  .lift {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
 }

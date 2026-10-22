@@ -50,7 +50,7 @@ function AppShell() {
           {NAV.map((n) => {
             const active = path.startsWith(n.to);
             return (
-              <Link key={n.to} to={n.to} className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors", active ? "bg-card text-foreground shadow-soft" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+              <Link key={n.to} to={n.to} className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors", active ? "bg-card text-foreground shadow-soft" : "text-sidebar-foreground hover:bg-sidebar-accent hover:translate-x-0.5")}>
                 <n.icon className={cn("size-4", active && "text-primary")} />
                 {n.label}
               </Link>
