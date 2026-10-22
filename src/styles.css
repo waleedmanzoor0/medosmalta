@@ -160,3 +160,22 @@
     transform: translateY(0);
   }
 }
+
+.money-meter {
+  display: block;
+  width: 100%;
+  height: 0.4rem;
+  appearance: none;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  color: var(--primary);
+}
+.money-meter::-webkit-progress-bar { background: var(--muted); }
+.money-meter::-webkit-progress-value { background: var(--primary); }
+.money-meter::-moz-progress-bar { background: var(--primary); }
+.money-meter-over::-webkit-progress-value { background: var(--destructive); }
+.money-meter-over::-moz-progress-bar { background: var(--destructive); }
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise { animation: none; }
+}

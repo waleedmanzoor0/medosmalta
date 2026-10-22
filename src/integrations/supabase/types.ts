@@ -156,6 +156,75 @@ export type Database = {
         }
         Relationships: []
       }
+      money_budgets: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          id: string
+          is_sample: boolean
+          month: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          month: string
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          month?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      money_transactions: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          id: string
+          is_sample: boolean
+          kind: string
+          notes: string | null
+          occurred_on: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          kind: string
+          notes?: string | null
+          occurred_on?: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          kind?: string
+          notes?: string | null
+          occurred_on?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -267,6 +336,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      savings_goals: {
+        Row: {
+          created_at: string
+          id: string
+          is_sample: boolean
+          saved_amount: number
+          target_amount: number
+          target_date: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          saved_amount?: number
+          target_amount: number
+          target_date?: string | null
+          title: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          saved_amount?: number
+          target_amount?: number
+          target_date?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       tasks: {
         Row: {

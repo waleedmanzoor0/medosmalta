@@ -17,3 +17,5 @@
 - Revision scheduling wraps the SuperMemo engine in pure `src/lib/revision.ts`; quiz attempts store answer snapshots. Why: reliable spaced repetition and durable results after questions change.
 - AI-generated study content must be stored with an `origin` flag (`ai_unverified` until the user verifies). Why: never present AI medical content as verified.
 - Single-owner auth: public signup is disabled; the first and only account is created by `createOwner` (server fn, admin client, refuses once any user exists). Usernames map to `<username>@medos.local` for auth calls. Why: private personal app.
+- Money totals and analytics live in pure `src/lib/money.ts` and `src/lib/analytics.ts` with tests; analytics labels calendar hours as scheduled and excludes sample rows by default. Why: precise financial calculations and honest progress reporting without an actual-study log.
+- Mobile navigation keeps five primary destinations and a More menu for money, analytics and settings. Why: preserve legible navigation as sections grow.

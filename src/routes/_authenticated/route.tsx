@@ -1,6 +1,8 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BookOpen, CalendarRange, CheckSquare, Layers, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import { BarChart3, BookOpen, CalendarRange, CheckSquare, Layers, LayoutDashboard, LogOut, Menu, Settings, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/data";
 import { cn } from "@/lib/utils";
@@ -22,6 +24,8 @@ const NAV = [
   { to: "/revision", label: "Revision Centre", short: "Revise", icon: Layers },
   { to: "/planner", label: "Smart Planner", short: "Planner", icon: CalendarRange },
   { to: "/tasks", label: "Tasks", short: "Tasks", icon: CheckSquare },
+  { to: "/money", label: "Money Hub", short: "Money", icon: Wallet },
+  { to: "/analytics", label: "Progress Analytics", short: "Progress", icon: BarChart3 },
   { to: "/settings", label: "Settings & data", short: "More", icon: Settings },
 ] as const;
 
@@ -56,9 +60,9 @@ function AppShell() {
         <div className="mt-auto rounded-xl border bg-card p-3">
           <p className="truncate text-sm font-semibold">{data?.profile?.display_name || "Student"}</p>
           <p className="truncate text-xs text-muted-foreground">@{data?.email.split("@")[0]}</p>
-          <button onClick={signOut} className="mt-3 flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" onClick={signOut} className="mt-3 flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">
             <LogOut className="size-3.5" /> Sign out
-          </button>
+          </Button>
         </div>
       </aside>
 
@@ -72,7 +76,7 @@ function AppShell() {
       </div>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-6 rounded-2xl border bg-card/95 p-1.5 shadow-lift backdrop-blur lg:hidden">
-        {NAV.map((n) => {
+        {NAV.slice(0, 5).map((n) => {
           const active = path.startsWith(n.to);
           return (
             <Link key={n.to} to={n.to} className={cn("flex flex-col items-center gap-0.5 rounded-xl py-1.5 text-[10px] font-semibold", active ? "bg-primary-soft text-accent-foreground" : "text-muted-foreground")}>
@@ -81,6 +85,7 @@ function AppShell() {
             </Link>
           );
         })}
+        <DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" className={cn("h-auto flex-col gap-0.5 rounded-xl py-1.5 text-[10px]", NAV.slice(5).some(n => path.startsWith(n.to)) ? "bg-primary-soft text-accent-foreground" : "text-muted-foreground")}><Menu className="size-5" />More</Button></DropdownMenuTrigger><DropdownMenuContent align="end" side="top">{NAV.slice(5).map(n => <DropdownMenuItem key={n.to} asChild><Link to={n.to}><n.icon />{n.label}</Link></DropdownMenuItem>)}<DropdownMenuItem onClick={signOut}><LogOut />Sign out</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
       </nav>
     </div>
   );

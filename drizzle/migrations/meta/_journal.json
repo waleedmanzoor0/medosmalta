@@ -15,6 +15,13 @@
       "when": 1792692414642,
       "tag": "0001_revision_quizzes",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792692877584,
+      "tag": "0002_money_hub",
+      "breakpoints": true
     }
   ]
 }
