@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportAll, friendlyError, loadSampleData, removeSampleData, useProfile, useSave } from "@/lib/data";
 
 export const Route = createFileRoute("/_authenticated/settings")({
-  head: () => ({ meta: [{ title: "Settings & data — MedOS" }, { name: "description", content: "Profile, sample data and exports." }] }),
+  head: () => ({ meta: [{ title: "Settings & data — MedOS" }, { name: "description", content: "Profile, sample data and exports." }, { property: "og:title", content: "Settings & data — MedOS" }, { property: "og:description", content: "Profile, sample data and exports." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SettingsPage,
 });
 

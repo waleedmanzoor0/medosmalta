@@ -10,7 +10,7 @@ import { useRemove, useRows, useSave, type Module, type Topic } from "@/lib/data
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/study")({
-  head: () => ({ meta: [{ title: "Study Hub — MedOS" }, { name: "description", content: "Modules, lectures, topics and learning objectives." }] }),
+  head: () => ({ meta: [{ title: "Study Hub — MedOS" }, { name: "description", content: "Modules, lectures, topics and learning objectives." }, { property: "og:title", content: "Study Hub — MedOS" }, { property: "og:description", content: "Modules, lectures, topics and learning objectives." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: StudyHub,
 });
 
