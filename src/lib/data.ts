@@ -3,7 +3,10 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
-export type TableName = "modules" | "topics" | "tasks" | "events" | "flashcards" | "profiles";
+export type TableName = "modules" | "topics" | "tasks" | "events" | "flashcards" | "profiles" | "quiz_questions" | "quiz_attempts";
+export type Flashcard = Tables<"flashcards">;
+export type QuizQuestion = Tables<"quiz_questions">;
+export type QuizAttempt = Tables<"quiz_attempts">;
 export type Module = Tables<"modules">;
 export type Topic = Tables<"topics">;
 export type Task = Tables<"tasks">;
@@ -17,6 +20,8 @@ const orderBy: Record<TableName, { col: string; asc: boolean }> = {
   events: { col: "starts_at", asc: true },
   flashcards: { col: "due_at", asc: true },
   profiles: { col: "created_at", asc: true },
+  quiz_questions: { col: "created_at", asc: true },
+  quiz_attempts: { col: "created_at", asc: false },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,7 +149,7 @@ export async function loadSampleData() {
 }
 
 export async function removeSampleData() {
-  for (const t of ["events", "tasks", "topics", "flashcards", "modules"] as const) {
+  for (const t of ["quiz_attempts", "quiz_questions", "events", "tasks", "flashcards", "topics", "modules"] as const) {
     const { error } = await supabase.from(t).delete().eq("is_sample", true);
     if (error) throw error;
   }
@@ -163,16 +168,18 @@ function download(name: string, content: string, type: string) {
 
 export function toCsv(rows: Record<string, unknown>[]) {
   if (!rows.length) return "";
-  const cols = Object.keys(rows[0]!);
+  const first = rows[0];
+  if (!first) return "";
+  const cols = Object.keys(first);
   const esc = (v: unknown) => {
-    const s = v == null ? "" : String(v);
+    const s = v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return [cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
 }
 
 export async function exportAll(format: "json" | "csv") {
-  const tables = ["modules", "topics", "tasks", "events", "flashcards"] as const;
+  const tables = ["modules", "topics", "tasks", "events", "flashcards", "quiz_questions", "quiz_attempts"] as const;
   const out: Record<string, Record<string, unknown>[]> = {};
   for (const t of tables) {
     const { data, error } = await supabase.from(t).select("*");

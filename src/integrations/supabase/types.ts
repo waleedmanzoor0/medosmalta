@@ -177,6 +177,97 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_attempts: {
+        Row: {
+          answers: Json
+          correct_count: number
+          created_at: string
+          id: string
+          is_sample: boolean
+          module_id: string | null
+          total_count: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          correct_count: number
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          module_id?: string | null
+          total_count: number
+          user_id?: string
+        }
+        Update: {
+          answers?: Json
+          correct_count?: number
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          module_id?: string | null
+          total_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          correct_index: number
+          created_at: string
+          explanation: string | null
+          id: string
+          is_sample: boolean
+          options: Json
+          origin: string
+          prompt: string
+          source_reference: string | null
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          correct_index: number
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          is_sample?: boolean
+          options: Json
+          origin?: string
+          prompt: string
+          source_reference?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          correct_index?: number
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          is_sample?: boolean
+          options?: Json
+          origin?: string
+          prompt?: string
+          source_reference?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           completed: boolean

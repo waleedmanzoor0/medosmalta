@@ -13,7 +13,7 @@ import { nextDueDate } from "@/lib/schedule";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/tasks")({
-  head: () => ({ meta: [{ title: "Tasks — MedOS" }, { name: "description", content: "Tasks, assignments and routines." }] }),
+  head: () => ({ meta: [{ title: "Tasks — MedOS" }, { name: "description", content: "Tasks, assignments and routines." }, { property: "og:title", content: "Tasks — MedOS" }, { property: "og:description", content: "Tasks, assignments and routines." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: TasksPage,
 });
 

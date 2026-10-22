@@ -14,5 +14,6 @@
 - Signed-in pages live under `src/routes/_authenticated/` (ssr:false gate + AppShell nav). Why: session lives in localStorage.
 - Sample rows carry `is_sample=true` so they can be bulk-removed. Why: user requirement for removable demo data.
 - Scheduling logic (conflicts, free-slot finding, recurrence) stays pure in `src/lib/schedule.ts` with tests. Why: testable rules.
+- Revision scheduling wraps the SuperMemo engine in pure `src/lib/revision.ts`; quiz attempts store answer snapshots. Why: reliable spaced repetition and durable results after questions change.
 - AI-generated study content must be stored with an `origin` flag (`ai_unverified` until the user verifies). Why: never present AI medical content as verified.
 - Single-owner auth: public signup is disabled; the first and only account is created by `createOwner` (server fn, admin client, refuses once any user exists). Usernames map to `<username>@medos.local` for auth calls. Why: private personal app.

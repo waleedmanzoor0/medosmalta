@@ -13,7 +13,7 @@ import { findConflicts, findNextFreeSlot } from "@/lib/schedule";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/planner")({
-  head: () => ({ meta: [{ title: "Smart Planner — MedOS" }, { name: "description", content: "Weekly calendar with conflict detection." }] }),
+  head: () => ({ meta: [{ title: "Smart Planner — MedOS" }, { name: "description", content: "Weekly calendar with conflict detection." }, { property: "og:title", content: "Smart Planner — MedOS" }, { property: "og:description", content: "Weekly calendar with conflict detection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Planner,
 });
 

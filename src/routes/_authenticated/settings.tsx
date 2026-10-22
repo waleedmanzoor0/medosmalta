@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportAll, friendlyError, loadSampleData, removeSampleData, useProfile, useSave } from "@/lib/data";
 
 export const Route = createFileRoute("/_authenticated/settings")({
-  head: () => ({ meta: [{ title: "Settings & data — MedOS" }, { name: "description", content: "Profile, sample data and exports." }] }),
+  head: () => ({ meta: [{ title: "Settings & data — MedOS" }, { name: "description", content: "Profile, sample data and exports." }, { property: "og:title", content: "Settings & data — MedOS" }, { property: "og:description", content: "Profile, sample data and exports." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SettingsPage,
 });
 
@@ -65,7 +65,7 @@ function SettingsPage() {
           </div>
         </Panel>
         <Panel title="Export your records">
-          <p className="mb-4 text-sm text-muted-foreground">Download everything you've stored — modules, topics, tasks, events and flashcards.</p>
+          <p className="mb-4 text-sm text-muted-foreground">Download your modules, topics, tasks, events, flashcards, quiz questions and results.</p>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={() => run("json", () => exportAll("json"), "Export ready")} disabled={!!busy}><Download /> JSON</Button>
             <Button variant="outline" onClick={() => run("csv", () => exportAll("csv"), "Export ready")} disabled={!!busy}><Download /> CSV files</Button>

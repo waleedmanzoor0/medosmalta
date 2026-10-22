@@ -9,7 +9,7 @@ import { hoursBetween } from "@/lib/schedule";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — MedOS" }, { name: "description", content: "Your day in medicine at a glance." }] }),
+  head: () => ({ meta: [{ title: "Dashboard — MedOS" }, { name: "description", content: "Your day in medicine at a glance." }, { property: "og:title", content: "Dashboard — MedOS" }, { property: "og:description", content: "Your day in medicine at a glance." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Dashboard,
 });
 
@@ -124,7 +124,7 @@ function Dashboard() {
           ) : <p className="text-sm text-muted-foreground">No deadlines in the next two weeks.</p>}
         </Panel>
 
-        <Panel title="Revision due" action={<RotateCcw className="size-4 text-muted-foreground" />}>
+        <Panel title="Revision due" action={<Link to="/revision" aria-label="Open Revision Centre" className="text-primary"><RotateCcw className="size-4" /></Link>}>
           {revision.length ? (
             <ul className="grid gap-2">
               {revision.map((t) => (
