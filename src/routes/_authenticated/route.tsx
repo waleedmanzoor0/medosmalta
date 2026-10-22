@@ -54,7 +54,7 @@ function AppShell() {
         </nav>
         <div className="mt-auto rounded-xl border bg-card p-3">
           <p className="truncate text-sm font-semibold">{data?.profile?.display_name || "Student"}</p>
-          <p className="truncate text-xs text-muted-foreground">{data?.email}</p>
+          <p className="truncate text-xs text-muted-foreground">@{data?.email.split("@")[0]}</p>
           <button onClick={signOut} className="mt-3 flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground">
             <LogOut className="size-3.5" /> Sign out
           </button>
