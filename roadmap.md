@@ -2,6 +2,6 @@
 
 - [x] Iteration 1: auth, database, dashboard, Study Hub, Task Manager, Smart Planner, sample data, export
 - [x] Iteration 2: Revision Centre (flashcards with spaced repetition, quizzes, difficult topics list, exports and checks)
-- [ ] Iteration 3: Money Hub (income, expenses, budgets, savings goals in EUR, charts)
-- [ ] Iteration 4: Progress Analytics (study time by module, quiz performance, consistency, weekly goals)
+- [ ] Iteration 3: Money Hub (income, expenses, budgets, savings goals in EUR, charts) — in progress
+- [ ] Iteration 4: Progress Analytics (study time by module, quiz performance, consistency, weekly goals) — in progress
 - [ ] Later: AI flashcards, lecture summaries, oral exam practice (marked unverified)
