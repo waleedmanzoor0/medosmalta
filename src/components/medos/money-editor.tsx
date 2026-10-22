@@ -27,8 +27,8 @@ export function MoneyEditor({ state, month, close }: { state: MoneyEditorState; 
     <DialogHeader><DialogTitle>{row ? "Edit" : "New"} {state.type === "goal" ? "savings goal" : state.type}</DialogTitle></DialogHeader>
     <form onSubmit={submit} className="grid gap-4">
       {state.type !== "budget" && <Field label="Title"><Input name="title" required maxLength={120} defaultValue={state.row?.title ?? ""} /></Field>}
-      {state.type === "transaction" && <Field label="Type"><select className={selectCls} value={kind} onChange={e => setKind(e.target.value)}><option value="expense">Expense</option><option value="income">Income</option></select></Field>}
-      {state.type !== "goal" && <Field label="Category"><select key={kind} name="category" className={selectCls} defaultValue={state.row?.category ?? undefined}>{(kind === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(c => <option key={c}>{c}</option>)}</select></Field>}
+      {state.type === "transaction" && <Field label="Type"><select aria-label="Type" className={selectCls} value={kind} onChange={e => setKind(e.target.value)}><option value="expense">Expense</option><option value="income">Income</option></select></Field>}
+      {state.type !== "goal" && <Field label="Category"><select aria-label="Category" key={kind} name="category" className={selectCls} defaultValue={state.row?.category ?? undefined}>{(kind === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(c => <option key={c}>{c}</option>)}</select></Field>}
       {state.type !== "goal" ? <Field label="Amount (€)"><Input name="amount" type="number" min="0.01" max="9999999999.99" step="0.01" required defaultValue={state.row?.amount} /></Field> : <>
         <Field label="Target amount (€)"><Input name="target" type="number" min="0.01" max="9999999999.99" step="0.01" required defaultValue={state.row?.target_amount} /></Field>
         <Field label="Saved so far (€)"><Input name="saved" type="number" min="0" max="9999999999.99" step="0.01" required defaultValue={state.row?.saved_amount ?? 0} /></Field>
