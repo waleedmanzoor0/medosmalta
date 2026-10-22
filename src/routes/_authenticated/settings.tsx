@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, Panel, PageHeader } from "@/components/medos/ui";
+import { supabase } from "@/integrations/supabase/client";
 import { exportAll, friendlyError, loadSampleData, removeSampleData, useProfile, useSave } from "@/lib/data";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -70,14 +71,45 @@ function SettingsPage() {
             <Button variant="outline" onClick={() => run("csv", () => exportAll("csv"), "Export ready")} disabled={!!busy}><Download /> CSV files</Button>
           </div>
         </Panel>
+        <ChangePassword />
         <Panel title="Privacy & accuracy">
           <ul className="grid gap-2 text-sm text-muted-foreground">
-            <li>Your records are private to your account.</li>
+            <li>This workspace has a single owner — new sign-ups are switched off.</li>
             <li>Do not store patient-identifiable information.</li>
             <li>Record a source for clinical facts. Future AI-generated content will be clearly marked as unverified.</li>
           </ul>
         </Panel>
       </div>
     </>
+  );
+}
+
+function ChangePassword() {
+  const [busy, setBusy] = useState(false);
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const f = new FormData(form);
+    const current = String(f.get("current") ?? "");
+    const next = String(f.get("next") ?? "");
+    if (!current) return void toast.error("Enter your current password.");
+    if (next.length < 10) return void toast.error("New password must be at least 10 characters.");
+    if (next !== String(f.get("confirm"))) return void toast.error("New passwords don't match.");
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ password: next, current_password: current } as { password: string });
+    setBusy(false);
+    if (error) return void toast.error(error.message);
+    form.reset();
+    toast.success("Password changed");
+  }
+  return (
+    <Panel title="Change password">
+      <form onSubmit={submit} className="grid gap-3">
+        <Field label="Current password"><Input name="current" type="password" autoComplete="current-password" /></Field>
+        <Field label="New password"><Input name="next" type="password" autoComplete="new-password" /></Field>
+        <Field label="Confirm new password"><Input name="confirm" type="password" autoComplete="new-password" /></Field>
+        <Button type="submit" variant="outline" className="justify-self-start" disabled={busy}>Update password</Button>
+      </form>
+    </Panel>
   );
 }
