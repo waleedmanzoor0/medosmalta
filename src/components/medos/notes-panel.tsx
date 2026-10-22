@@ -32,8 +32,8 @@ export function NotesPanel({ onShowDrafts }: { onShowDrafts: () => void }) {
 
   async function upload(file: File) {
     const mime = noteMime(file.name, file.type);
-    if (!mime) return toast.error("Please choose a PDF or PowerPoint (.pptx) file.");
-    if (file.size > MAX_NOTE_BYTES) return toast.error("Files must be 25 MB or smaller.");
+    if (!mime) { toast.error("Please choose a PDF or PowerPoint (.pptx) file."); return; }
+    if (file.size > MAX_NOTE_BYTES) { toast.error("Files must be 25 MB or smaller."); return; }
     setUploading(true);
     try {
       const { data: u } = await supabase.auth.getUser();
@@ -50,7 +50,7 @@ export function NotesPanel({ onShowDrafts }: { onShowDrafts: () => void }) {
 
   async function open(n: StudyNote) {
     const { data, error } = await supabase.storage.from("study-notes").createSignedUrl(n.file_path, 300);
-    if (error) return toast.error(friendlyError(error));
+    if (error) { toast.error(friendlyError(error)); return; }
     window.open(data.signedUrl, "_blank", "noopener");
   }
 
