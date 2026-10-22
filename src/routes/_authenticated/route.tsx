@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BookOpen, CalendarRange, CheckSquare, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import { BookOpen, CalendarRange, CheckSquare, Layers, LayoutDashboard, LogOut, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/data";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/_authenticated")({
 const NAV = [
   { to: "/dashboard", label: "Dashboard", short: "Today", icon: LayoutDashboard },
   { to: "/study", label: "Study Hub", short: "Study", icon: BookOpen },
+  { to: "/revision", label: "Revision Centre", short: "Revise", icon: Layers },
   { to: "/planner", label: "Smart Planner", short: "Planner", icon: CalendarRange },
   { to: "/tasks", label: "Tasks", short: "Tasks", icon: CheckSquare },
   { to: "/settings", label: "Settings & data", short: "More", icon: Settings },
@@ -70,7 +71,7 @@ function AppShell() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border bg-card/95 p-1.5 shadow-lift backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-6 rounded-2xl border bg-card/95 p-1.5 shadow-lift backdrop-blur lg:hidden">
         {NAV.map((n) => {
           const active = path.startsWith(n.to);
           return (

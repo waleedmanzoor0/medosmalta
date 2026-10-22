@@ -65,7 +65,7 @@ function SettingsPage() {
           </div>
         </Panel>
         <Panel title="Export your records">
-          <p className="mb-4 text-sm text-muted-foreground">Download everything you've stored — modules, topics, tasks, events and flashcards.</p>
+          <p className="mb-4 text-sm text-muted-foreground">Download your modules, topics, tasks, events, flashcards, quiz questions and results.</p>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={() => run("json", () => exportAll("json"), "Export ready")} disabled={!!busy}><Download /> JSON</Button>
             <Button variant="outline" onClick={() => run("csv", () => exportAll("csv"), "Export ready")} disabled={!!busy}><Download /> CSV files</Button>
