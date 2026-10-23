@@ -256,6 +256,30 @@ export type Database = {
         }
         Relationships: []
       }
+      push_devices: {
+        Row: {
+          created_at: string
+          id: string
+          label: string | null
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          token: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       quiz_attempts: {
         Row: {
           answers: Json
