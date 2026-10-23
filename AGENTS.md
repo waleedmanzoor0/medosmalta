@@ -20,3 +20,4 @@
 - Money totals and analytics live in pure `src/lib/money.ts` and `src/lib/analytics.ts` with tests; analytics labels calendar hours as scheduled and excludes sample rows by default. Why: precise financial calculations and honest progress reporting without an actual-study log.
 - Mobile navigation keeps five primary destinations and a More menu for money, analytics and settings. Why: preserve legible navigation as sections grow.
 - Study notes (PDF/PPTX) live in the private `study-notes` bucket under `<user_id>/`; `generateCardsFromNote` (src/lib/notes.functions.ts) sends PDFs inline and PPTX slide text (pure `src/lib/notes.ts`) to the AI Gateway and inserts flashcards as `ai_unverified` with `note_id`. Why: reviewable AI drafts traceable to their source.
+- Phone alerts (Firebase web push): push_devices table, src/lib/push.ts registers tokens, push.functions.ts sends via connector gateway. Why: login alerts on owner's phone.
