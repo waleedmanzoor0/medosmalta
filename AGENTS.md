@@ -21,3 +21,4 @@
 - Mobile navigation keeps five primary destinations and a More menu for money, analytics and settings. Why: preserve legible navigation as sections grow.
 - Study notes (PDF/PPTX) live in the private `study-notes` bucket under `<user_id>/`; `generateCardsFromNote` (src/lib/notes.functions.ts) sends PDFs inline and PPTX slide text (pure `src/lib/notes.ts`) to the AI Gateway and inserts flashcards as `ai_unverified` with `note_id`. Why: reviewable AI drafts traceable to their source.
 - Phone alerts (Firebase web push): push_devices table, src/lib/push.ts registers tokens, push.functions.ts sends via connector gateway. Why: login alerts on owner's phone.
+- Push reminders: events 30 min before, tasks 08:00 Malta on due day (every 5 min). Why: phone reminders.
