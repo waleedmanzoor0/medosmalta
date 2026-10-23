@@ -14,7 +14,7 @@ export function maltaParts(now: Date): { date: string; hour: number } {
       .formatToParts(now)
       .map((x) => [x.type, x.value]),
   );
-  return { date: `${p.year}-${p.month}-${p.day}`, hour: Number(p.hour) };
+  return { date: `${p["year"]}-${p["month"]}-${p["day"]}`, hour: Number(p["hour"]) };
 }
 
 /** Task needs its morning reminder once it's 08:00+ in Malta on the due day. */
