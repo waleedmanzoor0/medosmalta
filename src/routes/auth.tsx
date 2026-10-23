@@ -30,6 +30,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const sendAlert = useServerFn(sendPushAlert);
   const status = useServerFn(getSetupStatus);
   const setup = useServerFn(createOwner);
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
@@ -62,6 +63,7 @@ function AuthPage() {
       if (needsSetup) await setup({ data: { username, password } });
       const { error } = await supabase.auth.signInWithPassword({ email: usernameToEmail(username), password });
       if (error) throw new Error(error.message.includes("Invalid") ? "Wrong username or password." : error.message);
+      sendAlert({ data: { kind: "login" } }).catch(() => {});
       navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error((err as Error).message);
