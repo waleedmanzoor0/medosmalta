@@ -280,6 +280,33 @@ export type Database = {
         }
         Relationships: []
       }
+      push_reminders: {
+        Row: {
+          created_at: string
+          fire_key: string
+          id: string
+          ref_id: string
+          ref_kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fire_key: string
+          id?: string
+          ref_id: string
+          ref_kind: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          fire_key?: string
+          id?: string
+          ref_id?: string
+          ref_kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       quiz_attempts: {
         Row: {
           answers: Json
