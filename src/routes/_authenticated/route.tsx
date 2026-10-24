@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Logo } from "../index";
+import { ThemeToggle } from "@/components/medos/theme-toggle";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -44,8 +45,8 @@ function AppShell() {
 
   return (
     <div className="min-h-screen lg:flex">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r bg-sidebar px-4 py-6 lg:flex">
-        <div className="px-2"><Logo /></div>
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r bg-sidebar px-4 backdrop-blur-xl py-6 lg:flex">
+        <div className="flex items-center justify-between px-2"><Logo /><ThemeToggle /></div>
         <nav className="mt-10 grid gap-1">
           {NAV.map((n) => {
             const active = path.startsWith(n.to);
@@ -69,6 +70,7 @@ function AppShell() {
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between px-5 pt-5 lg:hidden">
           <Logo />
+          <ThemeToggle />
         </div>
         <main className="mx-auto max-w-6xl px-5 pb-28 pt-6 lg:px-10 lg:pb-12 lg:pt-10">
           <Outlet />
