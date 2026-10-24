@@ -444,6 +444,7 @@ export type Database = {
           size_bytes: number
           status: string
           title: string
+          topic_id: string | null
           user_id: string
         }
         Insert: {
@@ -458,6 +459,7 @@ export type Database = {
           size_bytes?: number
           status?: string
           title: string
+          topic_id?: string | null
           user_id?: string
         }
         Update: {
@@ -472,6 +474,7 @@ export type Database = {
           size_bytes?: number
           status?: string
           title?: string
+          topic_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -480,6 +483,13 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_notes_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
             referencedColumns: ["id"]
           },
         ]
