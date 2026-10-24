@@ -95,7 +95,7 @@ function Dashboard() {
           ) : <p className="text-sm text-muted-foreground">Nothing scheduled. A good day to add an independent study block.</p>}
         </Panel>
 
-        <Panel title="Next work shift">
+        <Panel title="Next work shift" className="lift">
           {nextShift ? (
             <div className="flex items-start gap-3">
               <div className="flex size-10 items-center justify-center rounded-lg bg-warning-soft text-warning"><Briefcase className="size-5" /></div>
