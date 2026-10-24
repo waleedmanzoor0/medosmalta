@@ -56,8 +56,8 @@ function Dashboard() {
         </Panel>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Panel title="Daily progress">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Panel title="Daily progress" className="lift md:row-span-2 lg:col-span-1">
           <div className="flex items-center gap-5">
             <Ring pct={pct} />
             <div className="text-sm text-muted-foreground">
@@ -67,7 +67,7 @@ function Dashboard() {
           </div>
         </Panel>
 
-        <Panel title="This week's study" className="lg:col-span-2" action={<span className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">{weekHours.toFixed(1)}h</span> / {goal}h goal</span>}>
+        <Panel title="This week's study" className="lift md:col-span-1 lg:col-span-3" action={<span className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">{weekHours.toFixed(1)}h</span> / {goal}h goal</span>}>
           <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={week}>
@@ -82,7 +82,7 @@ function Dashboard() {
           </div>
         </Panel>
 
-        <Panel title="Today's study plan" className="lg:col-span-2" action={<Link to="/planner" className="text-xs font-semibold text-primary">Planner →</Link>}>
+        <Panel title="Today's study plan" className="lift md:col-span-1 lg:col-span-2" action={<Link to="/planner" className="text-xs font-semibold text-primary">Planner →</Link>}>
           {todayPlan.length ? (
             <ul className="stagger grid gap-2">
               {todayPlan.map((e) => (
@@ -108,7 +108,7 @@ function Dashboard() {
           ) : <p className="text-sm text-muted-foreground">No upcoming shifts.</p>}
         </Panel>
 
-        <Panel title="Upcoming deadlines" className="lg:col-span-2" action={<Link to="/tasks" className="text-xs font-semibold text-primary">All tasks →</Link>}>
+        <Panel title="Upcoming deadlines" className="lift md:col-span-2 lg:col-span-3" action={<Link to="/tasks" className="text-xs font-semibold text-primary">All tasks →</Link>}>
           {deadlines.length ? (
             <ul className="stagger divide-y">
               {deadlines.map((t) => (
@@ -124,7 +124,7 @@ function Dashboard() {
           ) : <p className="text-sm text-muted-foreground">No deadlines in the next two weeks.</p>}
         </Panel>
 
-        <Panel title="Revision due" action={<Link to="/revision" aria-label="Open Revision Centre" className="text-primary"><RotateCcw className="size-4" /></Link>}>
+        <Panel title="Revision due" className="lift" action={<Link to="/revision" aria-label="Open Revision Centre" className="text-primary"><RotateCcw className="size-4" /></Link>}>
           {revision.length ? (
             <ul className="stagger grid gap-2">
               {revision.map((t) => (
