@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState, Field, Panel, PageHeader, selectCls, STATUS_META, StatusPill, type Status } from "@/components/medos/ui";
-import { useRemove, useRows, useSave, type Module, type StudyNote, type Topic } from "@/lib/data";
+import { useRemove, useRows, useSave, type Module, type StudyNote, type Topic, type Flashcard } from "@/lib/data";
 import { TopicFiles } from "@/components/medos/topic-files";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,7 @@ function StudyHub() {
   const { data: modules = [], isLoading } = useRows<Module>("modules");
   const topics = useRows<Topic>("topics").data ?? [];
   const notes = useRows<StudyNote>("study_notes").data ?? [];
+  const flashcards = useRows<Flashcard>("flashcards").data ?? [];
   const removeModule = useRemove("modules");
   const removeTopic = useRemove("topics");
   const saveTopic = useSave("topics", "");
@@ -119,7 +120,7 @@ function StudyHub() {
                           </button>
                         ))}
                       </div>
-                      <TopicFiles topicId={t.id} moduleId={t.module_id} notes={notes.filter((n) => n.topic_id === t.id)} />
+                      <TopicFiles topicId={t.id} moduleId={t.module_id} notes={notes.filter((n) => n.topic_id === t.id)} cards={flashcards.filter((c) => c.topic_id === t.id).length} due={flashcards.filter((c) => c.topic_id === t.id && new Date(c.due_at) <= new Date()).length} />
                     </li>
                   ))}
                 </ul>

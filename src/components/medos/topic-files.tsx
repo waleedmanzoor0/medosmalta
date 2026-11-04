@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { FileText, Loader2, Paperclip, X } from "lucide-react";
+import { FileText, Layers, Loader2, Paperclip, Sparkles, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { generateCardsFromNote } from "@/lib/notes.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { friendlyError, type StudyNote } from "@/lib/data";
 import { MAX_NOTE_BYTES, noteMime } from "@/lib/notes";
 
-export function TopicFiles({ topicId, moduleId, notes }: { topicId: string; moduleId: string; notes: StudyNote[] }) {
+export function TopicFiles({ topicId, moduleId, notes, cards = 0, due = 0 }: { topicId: string; moduleId: string; notes: StudyNote[]; cards?: number; due?: number }) {
   const qc = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -38,6 +40,15 @@ export function TopicFiles({ topicId, moduleId, notes }: { topicId: string; modu
     if (w) w.location.href = data.signedUrl; else window.location.href = data.signedUrl;
   }
 
+  async function draft(n: StudyNote) {
+    setBusy(true);
+    try {
+      const r = await generateCardsFromNote({ data: { noteId: n.id } });
+      if (r.ok) toast.success(`${r.count} AI draft cards added to this topic`); else toast.error(r.error);
+    } catch (e) { toast.error(friendlyError(e as Error)); }
+    finally { setBusy(false); refresh(); qc.invalidateQueries({ queryKey: ["flashcards"] }); }
+  }
+
   async function detach(n: StudyNote) {
     if (!confirm(`Remove “${n.title}” from this topic? The file stays in Notes & AI drafts.`)) return;
     const { error } = await supabase.from("study_notes").update({ topic_id: null }).eq("id", n.id);
@@ -53,9 +64,11 @@ export function TopicFiles({ topicId, moduleId, notes }: { topicId: string; modu
             <span className="truncate">{n.title}</span>
             <span className="text-muted-foreground">{n.mime_type.includes("pdf") ? "PDF" : "PPTX"}</span>
           </button>
+          <button disabled={busy} onClick={() => draft(n)} aria-label={`Draft cards from ${n.title}`} title="Draft flashcards with AI" className="rounded-full p-0.5 text-primary hover:bg-muted disabled:opacity-50"><Sparkles className="size-3" /></button>
           <button onClick={() => detach(n)} aria-label={`Remove ${n.title}`} className="rounded-full p-0.5 text-muted-foreground hover:bg-muted"><X className="size-3" /></button>
         </span>
       ))}
+      {cards > 0 && <Link to="/revision" className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-1 text-xs text-accent-foreground"><Layers className="size-3.5" />{cards} cards{due ? ` · ${due} due` : ""}</Link>}
       <input ref={input} type="file" multiple accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation" className="hidden" aria-label="Attach lecture notes" onChange={(e) => e.target.files?.length && upload(e.target.files)} />
       <button disabled={busy} onClick={() => input.current?.click()} className="inline-flex items-center gap-1 rounded-full border border-dashed px-2 py-1 text-xs text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-60">
         {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Paperclip className="size-3.5" />} {busy ? "Uploading…" : "Attach notes"}

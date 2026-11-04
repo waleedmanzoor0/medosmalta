@@ -59,7 +59,7 @@ export const generateCardsFromNote = createServerFn({ method: "POST" })
       const cards = (out?.cards ?? []).filter((c) => c.front.trim() && c.back.trim()).slice(0, 40);
       if (!cards.length) return fail("The AI could not find content to turn into cards.");
       const rows = cards.map((c) => ({
-        front: c.front.trim(), back: c.back.trim(), origin: "ai_unverified", note_id: note.id,
+        front: c.front.trim(), back: c.back.trim(), origin: "ai_unverified", note_id: note.id, topic_id: note.topic_id ?? null,
         source_reference: [note.title, c.source_reference].filter(Boolean).join(" · "),
       }));
       const { error: insErr } = await supabase.from("flashcards").insert(rows);
